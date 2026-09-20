@@ -385,20 +385,45 @@ function submitBooking() {
 }
 
 function showBookingSuccess(delivery) {
-  openModal(
-    '<div style="text-align:center">' +
-      '<div style="font-size:3rem;margin-bottom:10px">\u2705</div>' +
-      '<h3 style="margin-bottom:8px">Delivery Booked!</h3>' +
-      '<p style="color:#64748b;margin-bottom:20px">Your tracking number is:</p>' +
-      '<div style="background:#eef4ff;padding:16px;border-radius:12px;font-size:1.5rem;font-weight:800;color:#0b5cff;letter-spacing:.05em;margin-bottom:20px">' + delivery.tracking_number + '</div>' +
-      '<p style="font-size:.9rem;color:#64748b;margin-bottom:20px">Save this number to track your package.</p>' +
-      '<button class="btn btn-primary" style="width:100%" onclick="closeModal();navigate(\'track\');setTimeout(function(){document.getElementById(\'track-input\').value=\'' + delivery.tracking_number + '\';trackPackage();},200)">Track Now</button>' +
-    '</div>'
-  );
-  toast("Delivery booked: " + delivery.tracking_number, "success", 6000);
+  var d = delivery;
+  var row = function(label, value) {
+    return '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #e2e8f0"><span style="color:#64748b;font-size:.82rem">' + label + '</span><strong style="font-size:.88rem;text-align:right;max-width:60%">' + value + '</strong></div>';
+  };
+  var receiptHtml =
+    '<div style="text-align:center;margin-bottom:16px">' +
+      '<div style="font-size:2.5rem;margin-bottom:4px">✅</div>' +
+      '<h3 style="margin:0 0 4px;font-size:1.3rem">Booking Confirmed</h3>' +
+      '<p style="color:#64748b;font-size:.85rem;margin:0">Thank you for choosing SwiftShip Delivery</p>' +
+    '</div>' +
+    '<div style="background:linear-gradient(135deg,#0b5cff,#0891b2);color:#fff;padding:18px;border-radius:12px;text-align:center;margin-bottom:16px">' +
+      '<div style="font-size:.75rem;opacity:.9;text-transform:uppercase;letter-spacing:.05em">Tracking Number</div>' +
+      '<div style="font-size:1.5rem;font-weight:800;font-family:monospace;margin-top:6px;letter-spacing:.05em">' + d.tracking_number + '</div>' +
+    '</div>' +
+    '<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:14px 18px;margin-bottom:16px;text-align:left">' +
+      row("Customer", d.customer_name || "\u2014") +
+      row("Phone", d.customer_phone || "\u2014") +
+      row("Service", d.delivery_type || "Standard") +
+      row("Pickup", d.pickup_address || "\u2014") +
+      row("Destination", d.delivery_address || "\u2014") +
+      row("Package", (d.package_type || "Parcel") + " \u2022 " + (d.package_weight || 1) + " kg") +
+      row("Booking Date", new Date(d.created_at || Date.now()).toLocaleString()) +
+    '</div>' +
+    '<div style="background:#eef4ff;border-radius:12px;padding:14px 18px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center">' +
+      '<span style="color:#475569;font-size:.88rem">Estimated Cost</span>' +
+      '<span style="font-size:1.4rem;font-weight:800;color:#0b5cff">$' + Number(d.estimated_cost || 0).toFixed(2) + '</span>' +
+    '</div>' +
+    '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
+      '<button class="btn btn-primary" style="flex:1;min-width:120px" onclick="printReceipt()">🖨️ Print Receipt</button>' +
+      '<button class="btn btn-outline" style="flex:1;min-width:120px" onclick="closeModal();navigate(\'track\');setTimeout(function(){document.getElementById(\'track-input\').value=\'' + d.tracking_number + '\';trackPackage();},200)">📦 Track Package</button>' +
+    '</div>' +
+    '<button class="btn btn-outline" style="width:100%;margin-top:8px" onclick="closeModal();navigate(\'book\')">+ Book Another Delivery</button>';
+  openModal(receiptHtml);
+  window.__lastReceipt = receiptHtml;
+  toast("Delivery booked: " + d.tracking_number, "success", 6000);
 }
-
-// ============================================
+function printReceipt() {
+  window.print();
+}
 // TRACKING
 // ============================================
 function heroTrack() {
