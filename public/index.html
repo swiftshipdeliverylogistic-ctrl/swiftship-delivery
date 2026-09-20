@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SwiftShip Delivery | Fast, Safe & Reliable Delivery</title>
+<meta name="description" content="Book, manage and track deliveries with SwiftShip Delivery.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:#f6f8fc;color:#0f172a;line-height:1.55;overflow-x:hidden}
+a{color:#0b5cff;text-decoration:none}
+.container{max-width:1200px;margin:0 auto;padding:0 24px}
+
+/* HEADER */
+header.site{background:#fff;border-bottom:1px solid #e2e8f0;position:sticky;top:0;z-index:200;box-shadow:0 1px 3px rgba(15,23,42,.04)}
+.nav{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 24px;gap:16px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.15rem;cursor:pointer}
+.logo .mark{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#0b5cff,#22d3ee);display:grid;place-items:center;color:#fff;font-size:1.1rem}
+.nav-links{display:flex;list-style:none;gap:2px;align-items:center}
+.nav-links a{padding:9px 13px;border-radius:8px;color:#0f172a;font-weight:500;font-size:.92rem;cursor:pointer;transition:.15s}
+.nav-links a:hover,.nav-links a.active{background:#eef4ff;color:#0b5cff}
+.nav-right{display:flex;gap:8px;align-items:center}
+.lang-select{padding:8px 10px;border-radius:8px;border:1.5px solid #e2e8f0;background:#fff;font-size:.85rem;cursor:pointer;font-family:inherit}
+.lang-select:hover{border-color:#0b5cff}
+.hamburger{display:none;background:none;border:none;cursor:pointer;padding:8px;font-size:1.6rem;color:#0f172a;line-height:1}
+.mobile-menu{display:none;background:#fff;border-top:1px solid #e2e8f0;padding:12px 24px 20px}
+.mobile-menu.open{display:block}
+.mobile-menu a{display:block;padding:12px 8px;border-radius:8px;color:#0f172a;font-weight:500;cursor:pointer}
+.mobile-menu a:hover{background:#eef4ff}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 22px;border-radius:10px;border:none;cursor:pointer;font-weight:600;font-size:.95rem;transition:.15s;font-family:inherit;text-decoration:none}
+.btn:hover{transform:translateY(-1px)}
+.btn-primary{background:#0b5cff;color:#fff}
+.btn-primary:hover{background:#0842ba}
+.btn-outline{background:transparent;border:1.5px solid #e2e8f0;color:#0f172a}
+.btn-outline:hover{border-color:#0b5cff;color:#0b5cff}
+.btn-ghost{background:#eef4ff;color:#0b5cff}
+.btn-lg{padding:15px 28px;font-size:1rem}
+.btn-sm{padding:8px 14px;font-size:.85rem}
+.btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#0b5cff 0%,#0891b2 100%);color:#fff;padding:60px 24px 100px;position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;width:500px;height:500px;border-radius:50%;background:rgba(255,255,255,.06);top:-200px;right:-150px}
+.hero-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1.15fr 1fr;gap:50px;align-items:center;position:relative;z-index:1}
+.hero h1{font-size:2.9rem;line-height:1.12;margin-bottom:18px;font-weight:800}
+.hero p.lead{font-size:1.13rem;opacity:.94;margin-bottom:30px;max-width:540px}
+.hero .actions{display:flex;gap:12px;flex-wrap:wrap}
+.hero .btn-outline{border-color:rgba(255,255,255,.55);color:#fff;background:rgba(255,255,255,.08)}
+.hero .btn-outline:hover{background:rgba(255,255,255,.18);border-color:#fff}
+.hero-card{background:rgba(255,255,255,.13);padding:26px;border-radius:18px;border:1px solid rgba(255,255,255,.22);backdrop-filter:blur(10px)}
+.hero-card h3{margin-bottom:14px;font-size:1.05rem}
+.hero-card .row{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.15);font-size:.92rem}
+.hero-card .row:last-child{border-bottom:none}
+
+/* QUICK QUOTE WIDGET */
+.quote-widget{max-width:1200px;margin:-60px auto 0;padding:0 24px;position:relative;z-index:5}
+.quote-card{background:#fff;border-radius:18px;padding:30px;box-shadow:0 20px 60px rgba(15,23,42,.15);border:1px solid #e2e8f0}
+.quote-card h3{margin-bottom:6px;font-size:1.15rem}
+.quote-card .sub{color:#64748b;font-size:.9rem;margin-bottom:22px}
+.quote-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;align-items:end}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:.82rem;font-weight:600;color:#475569}
+.field input,.field select{padding:11px 13px;border:1.5px solid #e2e8f0;border-radius:9px;font-size:.92rem;font-family:inherit;background:#fff;color:#0f172a;transition:.15s}
+.field input:focus,.field select:focus{outline:none;border-color:#0b5cff;box-shadow:0 0 0 3px rgba(11,92,255,.1)}
+.quote-result{margin-top:22px;padding:18px 22px;border-radius:12px;background:linear-gradient(135deg,#eef4ff,#e0f2fe);display:none;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px}
+.quote-result.show{display:flex}
+.quote-result .amount{font-size:1.9rem;font-weight:800;color:#0b5cff}
+.quote-result .note{font-size:.8rem;color:#64748b}
+
+/* SECTIONS */
+section{padding:80px 0}
+.section-title{text-align:center;margin-bottom:46px}
+.section-title h2{font-size:1.85rem;margin-bottom:12px;font-weight:800}
+.section-title p{color:#64748b;font-size:1.02rem;max-width:600px;margin:0 auto}
+.grid{display:grid;gap:22px}
+.grid-2{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.grid-3{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.grid-4{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.card{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:26px;box-shadow:0 4px 20px rgba(15,23,42,.05);transition:.22s;cursor:default}
+.card.clickable{cursor:pointer}
+.card.clickable:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(15,23,42,.1);border-color:#c7d9ff}
+.card .icon{width:50px;height:50px;border-radius:12px;background:#eef4ff;color:#0b5cff;display:grid;place-items:center;font-size:1.5rem;margin-bottom:14px}
+.card h3{margin-bottom:8px;font-size:1.05rem}
+.card p{color:#64748b;font-size:.93rem}
+.card .learn{margin-top:14px;font-size:.87rem;color:#0b5cff;font-weight:600;display:inline-flex;align-items:center;gap:4px}
+
+/* HOW IT WORKS */
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:28px;counter-reset:step}
+.step{background:#fff;border-radius:14px;padding:30px 26px 26px;border:1px solid #e2e8f0;position:relative;transition:.2s}
+.step:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(15,23,42,.08)}
+.step::before{counter-increment:step;content:counter(step);position:absolute;top:-18px;left:26px;width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#0b5cff,#22d3ee);color:#fff;display:grid;place-items:center;font-weight:800;font-size:1.05rem;box-shadow:0 6px 16px rgba(11,92,255,.35)}
+.step h3{margin-top:8px;margin-bottom:8px}
+
+/* TRUST BADGES */
+.trust{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:20px;max-width:1000px;margin:0 auto}
+.trust-item{text-align:center;padding:20px 12px}
+.trust-item .ico{font-size:2rem;margin-bottom:8px}
+.trust-item strong{display:block;font-size:.95rem;margin-bottom:2px}
+.trust-item span{font-size:.82rem;color:#64748b}
+
+/* TRACK */
+.track-box{max-width:700px;margin:0 auto;background:#fff;border-radius:18px;padding:32px;box-shadow:0 12px 40px rgba(15,23,42,.08);border:1px solid #e2e8f0}
+.track-input{display:flex;gap:10px;flex-wrap:wrap}
+.track-input input{flex:1;min-width:200px;padding:14px 16px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:1rem;font-family:inherit}
+.track-input input:focus{outline:none;border-color:#0b5cff;box-shadow:0 0 0 3px rgba(11,92,255,.1)}
+
+/* TIMELINE */
+.timeline{margin-top:34px;padding-left:8px}
+.tl-item{display:flex;gap:18px;padding-bottom:26px;position:relative}
+.tl-item:last-child{padding-bottom:0}
+.tl-item:not(:last-child)::before{content:'';position:absolute;left:17px;top:36px;bottom:0;width:2px;background:#e2e8f0}
+.tl-dot{width:36px;height:36px;flex-shrink:0;border-radius:50%;background:#e2e8f0;color:#94a3b8;display:grid;place-items:center;font-size:.85rem;font-weight:700;z-index:1}
+.tl-dot.done{background:#16a34a;color:#fff}
+.tl-dot.current{background:#0b5cff;color:#fff;box-shadow:0 0 0 4px rgba(11,92,255,.2)}
+.tl-content{padding-top:6px}
+.tl-content strong{display:block;font-size:.98rem}
+.tl-content span{color:#64748b;font-size:.86rem}
+
+/* FORM */
+.form-card{background:#fff;border-radius:18px;padding:32px;border:1px solid #e2e8f0;box-shadow:0 4px 20px rgba(15,23,42,.05)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.form-row.one{grid-template-columns:1fr}
+.form-row.three{grid-template-columns:repeat(3,1fr)}
+.form-card h3{margin:20px 0 14px;font-size:1.05rem;color:#0b5cff;font-weight:700}
+.form-card h3:first-child{margin-top:0}
+.checkbox-row{display:flex;align-items:center;gap:8px;padding:8px 0;font-size:.92rem}
+.checkbox-row input{width:auto;accent-color:#0b5cff}
+
+/* TOAST */
+.toast-container{position:fixed;top:80px;right:20px;z-index:1000;display:flex;flex-direction:column;gap:10px;max-width:340px}
+.toast{background:#fff;border-left:4px solid #0b5cff;padding:14px 18px;border-radius:10px;box-shadow:0 10px 40px rgba(15,23,42,.15);font-size:.9rem;animation:slideIn .25s ease}
+.toast.success{border-color:#16a34a}
+.toast.error{border-color:#dc2626}
+.toast.warn{border-color:#f59e0b}
+@keyframes slideIn{from{transform:translateX(400px);opacity:0}to{transform:translateX(0);opacity:1}}
+
+/* MODAL */
+.modal-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:900;display:none;align-items:center;justify-content:center;padding:20px;animation:fadeIn .15s}
+.modal-backdrop.show{display:flex}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{background:#fff;border-radius:18px;max-width:600px;width:100%;max-height:85vh;overflow-y:auto;padding:30px;position:relative}
+.modal .close{position:absolute;top:14px;right:14px;background:none;border:none;font-size:1.4rem;cursor:pointer;color:#64748b;width:32px;height:32px;border-radius:8px}
+.modal .close:hover{background:#f1f5f9}
+.modal h3{margin-bottom:14px;font-size:1.3rem}
+
+/* TESTIMONIALS */
+.testimonial{background:#fff;border-radius:14px;padding:26px;border:1px solid #e2e8f0;box-shadow:0 4px 20px rgba(15,23,42,.05)}
+.testimonial .stars{color:#f59e0b;font-size:1rem;margin-bottom:10px}
+.testimonial p{color:#334155;font-size:.95rem;margin-bottom:16px;font-style:italic}
+.testimonial .author{display:flex;align-items:center;gap:12px}
+.testimonial .avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#0b5cff,#22d3ee);color:#fff;display:grid;place-items:center;font-weight:700;font-size:.9rem}
+.testimonial .author strong{display:block;font-size:.92rem}
+.testimonial .author span{font-size:.8rem;color:#64748b}
+
+/* FAQ */
+.faq-item{background:#fff;border:1px solid #e2e8f0;border-radius:12px;margin-bottom:12px;overflow:hidden;transition:.15s}
+.faq-item:hover{border-color:#c7d9ff}
+.faq-q{width:100%;background:none;border:none;padding:18px 22px;text-align:left;font-size:.98rem;font-weight:600;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-family:inherit;color:#0f172a}
+.faq-q::after{content:'+';font-size:1.4rem;color:#0b5cff;font-weight:400;transition:.2s}
+.faq-item.open .faq-q::after{content:'−';transform:rotate(180deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .25s ease;padding:0 22px;color:#64748b;font-size:.92rem}
+.faq-item.open .faq-a{max-height:300px;padding:0 22px 20px}
+
+/* DASHBOARD */
+.dash-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:18px;margin-bottom:26px}
+.stat-card{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:22px;box-shadow:0 4px 20px rgba(15,23,42,.05)}
+.stat-card .label{font-size:.82rem;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.03em}
+.stat-card .value{font-size:1.9rem;font-weight:800;margin:6px 0;color:#0f172a}
+.stat-card .trend{font-size:.82rem;color:#16a34a}
+.data-table{width:100%;background:#fff;border:1px solid #e2e8f0;border-radius:14px;overflow:hidden;border-collapse:collapse;font-size:.9rem}
+.data-table th{background:#f8fafc;text-align:left;padding:14px 16px;font-weight:600;color:#475569;font-size:.82rem;text-transform:uppercase;letter-spacing:.03em;border-bottom:1px solid #e2e8f0}
+.data-table td{padding:14px 16px;border-bottom:1px solid #f1f5f9}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tbody tr:hover{background:#f8fafc}
+.table-scroll{overflow-x:auto;border-radius:14px}
+
+/* BADGES */
+.badge{display:inline-block;padding:4px 10px;border-radius:999px;font-size:.75rem;font-weight:600}
+.badge.pending{background:#fef3c7;color:#92400e}
+.badge.transit{background:#dbeafe;color:#1e40af}
+.badge.delivered{background:#dcfce7;color:#166534}
+.badge.confirmed{background:#e0e7ff;color:#3730a3}
+.badge.cancelled{background:#fee2e2;color:#991b1b}
+.badge.demo{background:#f1f5f9;color:#475569;font-size:.7rem}
+
+/* NOTICE */
+.notice{background:#fffbeb;border-left:4px solid #f59e0b;padding:12px 16px;border-radius:8px;font-size:.86rem;color:#78350f;margin:16px 0}
+
+/* CTA */
+.cta{background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff;text-align:center;padding:80px 24px}
+.cta h2{font-size:1.9rem;margin-bottom:14px;color:#fff;font-weight:800}
+.cta p{color:#cbd5e1;font-size:1.02rem;margin-bottom:28px;max-width:600px;margin-left:auto;margin-right:auto}
+
+/* FOOTER */
+footer{background:#0f172a;color:#cbd5e1;padding:60px 24px 20px;font-size:.9rem}
+.footer-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;gap:36px}
+footer h4{color:#fff;margin-bottom:16px;font-size:.95rem}
+footer a,footer .f-link{color:#cbd5e1;display:block;padding:5px 0;cursor:pointer;transition:.15s}
+footer a:hover,footer .f-link:hover{color:#fff}
+.footer-bottom{max-width:1200px;margin:40px auto 0;padding-top:24px;border-top:1px solid #1e293b;text-align:center;color:#94a3b8;font-size:.82rem}
+
+/* VIEWS */
+.view{display:none}
+.view.active{display:block;animation:fadeUp .3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* WHATSAPP FLOAT */
+.wa-float{position:fixed;bottom:24px;right:24px;width:58px;height:58px;border-radius:50%;background:#25d366;color:#fff;display:grid;place-items:center;font-size:1.7rem;box-shadow:0 6px 24px rgba(37,211,102,.4);cursor:pointer;z-index:150;border:none;transition:.15s}
+.wa-float:hover{transform:scale(1.08)}
+
+/* LOADING */
+.spinner{width:20px;height:20px;border:2.5px solid #e2e8f0;border-top-color:#0b5cff;border-radius:50%;animation:spin .7s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:960px){
+  .hero-inner{grid-template-columns:1fr;gap:30px}
+  .hero h1{font-size:2.2rem}
+  .nav-links{display:none}
+  .hamburger{display:block}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .form-row,.form-row.three{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+  .hero h1{font-size:1.85rem}
+  .quote-card{padding:22px}
+  .footer-grid{grid-template-columns:1fr}
+  .toast-container{left:20px;right:20px;max-width:none}
+  section{padding:56px 0}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site">
+  <div class="nav">
+    <div class="logo" onclick="navigate('home')">
+      <div class="mark">🚚</div><span>SwiftShip Delivery</span>
+    </div>
+    <ul class="nav-links">
+      <li><a data-nav="services" data-i18n="nav.services">Services</a></li>
+      <li><a data-nav="how" data-i18n="nav.how">How It Works</a></li>
+      <li><a data-nav="track" data-i18n="nav.track">Track</a></li>
+      <li><a data-nav="pricing" data-i18n="nav.pricing">Pricing</a></li>
+      <li><a data-nav="business" data-i18n="nav.business">Business</a></li>
+      <li><a data-nav="support" data-i18n="nav.support">Support</a></li>
+    </ul>
+    <div class="nav-right">
+      <select class="lang-select" id="lang-switch" onchange="applyLanguage(this.value)" title="Language">
+        <option value="en">🌍 EN</option>
+        <option value="fr">🇫🇷 FR</option>
+        <option value="es">🇪🇸 ES</option>
+        <option value="ha">🇳🇬 HA</option>
+        <option value="yo">🇳🇬 YO</option>
+      </select>
+      <button class="btn btn-outline btn-sm" onclick="navigate('login')" data-i18n="nav.login">Login</button>
+      <button class="btn btn-primary btn-sm" onclick="navigate('book')" data-i18n="nav.book">Book Now</button>
+      <button class="hamburger" onclick="toggleMobile()" aria-label="Menu">☰</button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobile-menu">
+    <a onclick="navigate('services');toggleMobile()" data-i18n="nav.services">Services</a>
+    <a onclick="navigate('how');toggleMobile()" data-i18n="nav.how">How It Works</a>
+    <a onclick="navigate('track');toggleMobile()" data-i18n="nav.track">Track Package</a>
+    <a onclick="navigate('pricing');toggleMobile()" data-i18n="nav.pricing">Pricing</a>
+    <a onclick="navigate('business');toggleMobile()" data-i18n="nav.business">Business</a>
+    <a onclick="navigate('dashboard');toggleMobile()" data-i18n="nav.dashboard">Dashboard</a>
+    <a onclick="navigate('support');toggleMobile()" data-i18n="nav.support">Support</a>
+    <a onclick="navigate('about');toggleMobile()" data-i18n="nav.about">About</a>
+  </div>
+</header>
+
+<!-- HOME VIEW -->
+<div class="view active" id="view-home">
+  <section class="hero">
+    <div class="hero-inner">
+      <div>
+        <h1 data-i18n="hero.title">Fast, Safe & Reliable Delivery</h1>
+        <p class="lead" data-i18n="hero.subtitle">From pickup to doorstep — book in seconds, track in real time. Professional delivery you can count on.</p>
+        <div class="actions">
+          <button class="btn btn-primary btn-lg" onclick="navigate('book')" data-i18n="hero.book">📦 Book a Delivery</button>
+          <button class="btn btn-outline btn-lg" onclick="navigate('track')" data-i18n="hero.track">🔍 Track Package</button>
+        </div>
+      </div>
+      <div class="hero-card">
+        <h3 data-i18n="hero.card.title">📦 Service Information</h3>
+        <div class="row"><span data-i18n="hero.sameday">Same-day delivery</span><strong data-i18n="hero.available">Available</strong></div>
+        <div class="row"><span data-i18n="hero.tracking">Real-time tracking</span><strong data-i18n="hero.included">Included</strong></div>
+        <div class="row"><span data-i18n="hero.nationwide">Nationwide coverage</span><strong data-i18n="hero.yes">Yes</strong></div>
+        <div class="row"><span data-i18n="hero.insurance">Insurance option</span><strong data-i18n="hero.optional">Optional</strong></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="quote-widget">
+    <div class="quote-card">
+      <h3 data-i18n="quote.title">💰 Get an Instant Estimate</h3>
+      <p class="sub" data-i18n="quote.sub">Fill in the details below to see an estimated delivery cost.</p>
+      <div class="quote-grid">
+        <div class="field">
+          <label data-i18n="quote.pickup">Pickup location</label>
+          <input id="q-pickup" placeholder="e.g. Lagos" data-i18n-ph="quote.pickupPh">
+        </div>
+        <div class="field">
+          <label data-i18n="quote.delivery">Delivery location</label>
+          <input id="q-delivery" placeholder="e.g. Abuja" data-i18n-ph="quote.deliveryPh">
+        </div>
+        <div class="field">
+          <label data-i18n="quote.weight">Weight (kg)</label>
+          <input id="q-weight" type="number" min="0.1" step="0.1" value="1">
+        </div>
+        <div class="field">
+          <label data-i18n="quote.service">Service type</label>
+          <select id="q-service">
+            <option value="Standard">Standard</option>
+            <option value="Express">Express</option>
+            <option value="Same Day">Same Day</option>
+            <option value="International">International</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" onclick="quickQuote()" data-i18n="quote.calc">Calculate</button>
+      </div>
+      <div class="quote-result" id="quote-result">
+        <div>
+          <div style="font-size:.8rem;color:#64748b" data-i18n="quote.estimated">Estimated Delivery Cost</div>
+          <div class="amount" id="quote-amount">$0.00</div>
+        </div>
+        <div style="text-align:right">
+          <div class="note" data-i18n="quote.note">Final price confirmed on pickup.</div>
+          <button class="btn btn-primary btn-sm" style="margin-top:8px" onclick="navigate('book')" data-i18n="quote.book">Book This Delivery</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section id="services">
+    <div class="container">
+      <div class="section-title">
+        <h2 data-i18n="services.title">Our Delivery Services</h2>
+        <p data-i18n="services.subtitle">Whatever you need to send, we have a service for it.</p>
+      </div>
+      <div class="grid grid-4" id="services-grid"></div>
+    </div>
+  </section>
+
+  <section style="background:#fff" id="how">
+    <div class="container">
+      <div class="section-title">
+        <h2 data-i18n="how.title">How It Works</h2>
+        <p data-i18n="how.subtitle">Three simple steps from door to door.</p>
+      </div>
+      <div class="steps">
+        <div class="step"><h3 data-i18n="how.step1">Book your delivery</h3><p data-i18n="how.step1.desc">Enter pickup and delivery details, choose your service, and confirm. Under 2 minutes.</p></div>
+        <div class="step"><h3 data-i18n="how.step2">We pick it up</h3><p data-i18n="how.step2.desc">A driver collects your package. You get a tracking number instantly.</p></div>
+        <div class="step"><h3 data-i18n="how.step3">Track to your door</h3><p data-i18n="how.step3.desc">Follow your package in real time until it's delivered.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="section-title">
+        <h2 data-i18n="trust.title">Built for Trust</h2>
+        <p data-i18n="trust.subtitle">What you can count on with SwiftShip.</p>
+      </div>
+      <div class="trust">
+        <div class="trust-item"><div class="ico">🔒</div><strong data-i18n="trust.secure">Secure Booking</strong><span data-i18n="trust.secure.desc">Your data stays safe</span></div>
+        <div class="trust-item"><div class="ico">📍</div><strong data-i18n="trust.tracking">Live Tracking</strong><span data-i18n="trust.tracking.desc">Every step visible</span></div>
+        <div class="trust-item"><div class="ico">💰</div><strong data-i18n="trust.transparent">Transparent Pricing</strong><span data-i18n="trust.transparent.desc">No hidden fees</span></div>
+        <div class="trust-item"><div class="ico">📞</div><strong data-i18n="trust.support">Real Support</strong><span data-i18n="trust.support.desc">Humans, not bots</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section style="background:#fff">
+    <div class="container">
+      <div class="section-title">
+        <h2 data-i18n="test.title">What People Say</h2>
+        <p><span class="badge demo" data-i18n="test.demo">DEMO DATA</span> <span data-i18n="test.subtitle">Sample testimonials for illustration.</span></p>
+      </div>
+      <div class="grid grid-3">
+        <div class="testimonial">
+          <div class="stars">★★★★★</div>
+          <p data-i18n="test.1.text">"SwiftShip made sending packages effortless. The tracking was accurate the whole way."</p>
+          <div class="author"><div class="avatar">AO</div><div><strong>Adeola O.</strong><span data-i18n="test.1.role">Online Seller</span></div></div>
+        </div>
+        <div class="testimonial">
+          <div class="stars">★★★★★</div>
+          <p data-i18n="test.2.text">"Reliable same-day pickup. My customers get their orders fast and I get peace of mind."</p>
+          <div class="author"><div class="avatar">JM</div><div><strong>James M.</strong><span data-i18n="test.2.role">Small Business Owner</span></div></div>
+        </div>
+        <div class="testimonial">
+          <div class="stars">★★★★★</div>
+          <p data-i18n="test.3.text">"The pricing is clear from the start. No surprises at the end. Highly recommend."</p>
+          <div class="author"><div class="avatar">FK</div><div><strong>Fatima K.</strong><span data-i18n="test.3.role">Freelancer</span></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container" style="max-width:820px">
+      <div class="section-title">
+        <h2 data-i18n="faq.title">Frequently Asked Questions</h2>
+      </div>
+      <div id="faq-list"></div>
+    </div>
+  </section>
+
+  <section class="cta">
+    <h2 data-i18n="cta.title">Ready to send a package?</h2>
+    <p data-i18n="cta.subtitle">Book your delivery in under 2 minutes. Get a tracking number instantly.</p>
+    <button class="btn btn-primary btn-lg" onclick="navigate('book')" data-i18n="cta.button">📦 Book a Delivery Now</button>
+  </section>
+</div>
+
+<!-- TRACK VIEW -->
+<div class="view" id="view-track">
+  <section>
+    <div class="container">
+      <div class="section-title">
+        <h2 data-i18n="track.title">Track Your Package</h2>
+        <p data-i18n="track.subtitle">Enter your tracking number to see the latest status.</p>
+      </div>
+      <div class="track-box">
+        <div class="track-input">
+          <input id="track-input" placeholder="e.g. SWIFT-DEMO-001" data-i18n-ph="track.ph">
+          <button class="btn btn-primary" onclick="trackPackage()" data-i18n="track.button">🔍 Track</button>
+        </div>
+        <div class="notice" style="margin-top:16px"><strong data-i18n="track.tip">Demo tip:</strong> <span data-i18n="track.tipText">Try the demo tracking number SWIFT-DEMO-001 to see a sample tracking timeline.</span></div>
+        <div id="track-result"></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- BOOK VIEW -->
+<div class="view" id="view-book">
+  <section>
+    <div class="container">
+      <div class="section-title">
+        <h2 data-i18n="book.title">Book a Delivery</h2>
+        <p data-i18n="book.subtitle">Fill in the details below. You'll get a tracking number instantly.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:24px" id="book-layout">
+        <div class="form-card">
+          <h3 data-i18n="book.sec.customer">👤 Customer Information</h3>
+          <div class="form-row">
+            <div class="field"><label data-i18n="book.name">Full Name *</label><input id="b-name" required></div>
+            <div class="field"><label data-i18n="book.email">Email *</label><input id="b-email" type="email" required></div>
+          </div>
+          <div class="form-row one">
+            <div class="field"><label data-i18n="book.phone">Phone *</label><input id="b-phone" required></div>
+          </div>
+
+          <h3 data-i18n="book.sec.pickup">📍 Pickup</h3>
+          <div class="form-row">
+            <div class="field"><label data-i18n="book.address">Address *</label><input id="b-pickup-addr" required></div>
+            <div class="field"><label data-i18n="book.city">City *</label><input id="b-pickup-city" required></div>
+          </div>
+
+          <h3 data-i18n="book.sec.delivery">🎯 Destination</h3>
+          <div class="form-row">
+            <div class="field"><label data-i18n="book.address">Address *</label><input id="b-deliv-addr" required></div>
+            <div class="field"><label data-i18n="book.city">City *</label><input id="b-deliv-city" required></div>
+          </div>
+
+          <h3 data-i18n="book.sec.package">📦 Package</h3>
+          <div class="form-row three">
+            <div class="field"><label data-i18n="book.pkgType">Type</label>
+              <select id="b-pkg-type">
+                <option value="Parcel">Parcel</option>
+                <option value="Document">Document</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Fragile">Fragile</option>
+                <option value="Food">Food</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="field"><label data-i18n="book.weight">Weight (kg)</label><input id="b-weight" type="number" min="0.1" step="0.1" value="1"></div>
+            <div class="field"><label data-i18n="book.qty">Quantity</label><input id="b-qty" type="number" min="1" value="1"></div>
+          </div>
+          <div class="form-row one">
+            <div class="field"><label data-i18n="book.desc">Package description</label><input id="b-desc" placeholder="e.g. Books, electronics, documents"></div>
+          </div>
+
+          <h3 data-i18n="book.sec.service">🚚 Delivery Service</h3>
+          <div class="form-row">
+            <div class="field"><label data-i18n="book.service">Service</label>
+              <select id="b-service">
+                <option value="Standard">Standard (2–5 days)</option>
+                <option value="Express">Express (next day)</option>
+                <option value="Same Day">Same Day</option>
+                <option value="International">International</option>
+              </select>
+            </div>
+            <div class="field"><label data-i18n="book.pickupDate">Preferred Pickup Date</label><input id="b-date" type="date"></div>
+          </div>
+
+          <h3 data-i18n="book.sec.options">✨ Optional</h3>
+          <label class="checkbox-row"><input type="checkbox" id="b-insurance" onchange="updateBookingSummary()"> <span data-i18n="book.insurance">Add insurance (+10%)</span></label>
+          <label class="checkbox-row"><input type="checkbox" id="b-fragile" onchange="updateBookingSummary()"> <span data-i18n="book.fragile">Fragile handling (+$5)</span></label>
+          <label class="checkbox-row"><input type="checkbox" id="b-signature" onchange="updateBookingSummary()"> <span data-i18n="book.signature">Signature required (+$3)</span></label>
+
+          <div class="form-row one" style="margin-top:14px">
+            <div class="field"><label data-i18n="book.instructions">Special instructions</label><input id="b-instructions" placeholder="Gate code, delivery notes, etc."></div>
+          </div>
+
+          <button class="btn btn-primary btn-lg" style="width:100%;margin-top:20px" onclick="submitBooking()" id="book-submit-btn" data-i18n="book.submit">Continue to Confirmation</button>
+        </div>
+
+        <div>
+          <div class="form-card" style="position:sticky;top:100px">
+            <h3 data-i18n="book.summary">📋 Order Summary</h3>
+            <div id="booking-summary" style="font-size:.92rem"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- SERVICES VIEW -->
+<div class="view" id="view-services">
+  <section>
+    <div class="container">
+      <div class="section-title">
+        <h2 data-i18n="services.title">Our Delivery Services</h2>
+        <p data-i18n="services.subtitle">Whatever you need to send, we have a service for it.</p>
+      </div>
+      <div class="grid grid-3" id="services-grid-full"></div>
+    </div>
+  </section>
+</div>
+
+<!-- PRICING VIEW -->
+<div class="view" id="view-pricing">
+  <section>
+    <div class="container" style="max-width:800px">
+      <div class="section-title">
+        <h2 data-i18n="pricing.title">Delivery Price Calculator</h2>
+        <p data-i18n="pricing.subtitle">Get an estimate based on your package and locations.</p>
+      </div>
+      <div class="form-card">
+        <div class="form-row">
+          <div class="field"><label data-i18n="quote.pickup">Pickup location</label><input id="p-pickup"></div>
+          <div class="field"><label data-i18n="quote.delivery">Delivery location</label><input id="p-delivery"></div>
+        </div>
+        <div class="form-row three">
+          <div class="field"><label data-i18n="quote.weight">Weight (kg)</label><input id="p-weight" type="number" min="0.1" step="0.1" value="1"></div>
+          <div class="field"><label data-i18n="quote.service">Service type</label>
+            <select id="p-service">
+              <option value="Standard">Standard</option>
+              <option value="Express">Express</option>
+              <option value="Same Day">Same Day</option>
+              <option value="International">International</option>
+            </select>
+          </div>
+          <div class="field"><label data-i18n="book.qty">Quantity</label><input id="p-qty" type="number" min="1" value="1"></div>
+        </div>
+        <button class="btn btn-primary btn-lg" style="width:100%;margin-top:16px" onclick="calculatePricing()" data-i18n="quote.calc">Calculate</button>
+        <div id="pricing-result" style="margin-top:20px"></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- BUSINESS VIEW -->
+<div class="view" id="view-business">
+  <section>
+    <div class="container">
+      <div class="section-title">
+        <h2 data-i18n="business.title">Business Delivery Solutions</h2>
+        <p data-i18n="business.subtitle">Reliable shipping for online stores, restaurants, and growing businesses.</p>
+      </div>
+      <div class="grid grid-3" style="margin-bottom:40px">
+        <div class="card"><div class="icon">🏪</div><h3 data-i18n="business.online">Online Stores</h3><p data-i18n="business.online.desc">Ship orders directly to customers with scheduled pickups.</p></div>
+        <div class="card"><div class="icon">🍽️</div><h3 data-i18n="business.restaurants">Restaurants</h3><p data-i18n="business.restaurants.desc">Fast local delivery for food and perishables.</p></div>
+        <div class="card"><div class="icon">💼</div><h3 data-i18n="business.corporate">Corporate</h3><p data-i18n="business.corporate.desc">Document and parcel logistics for offices.</p></div>
+      </div>
+      <div class="form-card" style="max-width:700px;margin:0 auto">
+        <h3 data-i18n="business.form">Request a Business Account</h3>
+        <div class="form-row">
+          <div class="field"><label data-i18n="business.bizName">Business name *</label><input id="biz-name" required></div>
+          <div class="field"><label data-i18n="business.contact">Contact person *</label><input id="biz-contact" required></div>
+        </div>
+        <div class="form-row">
+          <div class="field"><label data-i18n="book.email">Email *</label><input id="biz-email" type="email" required></div>
+          <div class="field"><label data-i18n="book.phone">Phone</label><input id="biz-phone"></div>
+        </div>
+        <div class="form-row">
+          <div class="field"><label data-i18n="business.type">Business type</label>
+            <select id="biz-type"><option>Online Store</option><option>Restaurant</option><option>Corporate</option><option>Other</option></select>
+          </div>
+          <div class="field"><label data-i18n="business.volume">Monthly shipments</label>
+            <select id="biz-volume"><option>1–50</option><option>51–200</option><option>201–1000</option><option>1000+</option></select>
+          </div>
+        </div>
+        <div class="form-row one"><div class="field"><label data-i18n="business.message">Message</label><textarea id="biz-message" rows="4" style="padding:11px 13px;border:1.5px solid #e2e8f0;border-radius:9px;font-family:inherit;font-size:.92rem"></textarea></div></div>
+        <button class="btn btn-primary btn-lg" style="width:100%;margin-top:16px" onclick="submitBusiness()" data-i18n="business.submit">Send Inquiry</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- DASHBOARD VIEW -->
+<div class="view" id="view-dashboard">
+  <section>
+    <div class="container">
+      <div class="section-title"><h2 data-i18n="dash.title">My Dashboard</h2><p id="dash-welcome"></p></div>
+      <div class="dash-stats" id="dash-stats"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin:24px 0 14px;flex-wrap:wrap;gap:10px">
+        <h3 style="font-size:1.1rem" data-i18n="dash.shipments">My Shipments</h3>
+        <button class="btn btn-primary btn-sm" onclick="navigate('book')" data-i18n="nav.book">+ New Delivery</button>
+      </div>
+      <div class="table-scroll">
+        <table class="data-table" id="dash-table"></table>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- LOGIN VIEW -->
+<div class="view" id="view-login">
+  <section>
+    <div class="container" style="max-width:440px">
+      <div class="form-card">
+        <h2 style="margin-bottom:8px" data-i18n="login.title">Welcome Back</h2>
+        <p style="color:#64748b;margin-bottom:22px;font-size:.92rem" data-i18n="login.sub">Sign in to your SwiftShip account.</p>
+        <div class="field" style="margin-bottom:12px"><label data-i18n="login.email">Email</label><input id="login-email" type="email"></div>
+        <div class="field" style="margin-bottom:12px"><label data-i18n="login.password">Password</label><input id="login-password" type="password"></div>
+        <label class="checkbox-row"><input type="checkbox" id="login-remember"> <span data-i18n="login.remember">Remember me</span></label>
+        <button class="btn btn-primary" style="width:100%;margin-top:8px" onclick="doLogin()" data-i18n="login.btn">Sign In</button>
+        <div style="text-align:center;margin-top:16px;font-size:.9rem">
+          <span data-i18n="login.noAccount">Don't have an account?</span>
+          <a onclick="navigate('register')" style="cursor:pointer;font-weight:600" data-i18n="login.create">Create one</a>
+        </div>
+        <div style="text-align:center;margin-top:8px;font-size:.85rem">
+          <a onclick="navigate('home')" style="cursor:pointer;color:#64748b" data-i18n="login.guest">Continue as guest</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- REGISTER VIEW -->
+<div class="view" id="view-register">
+  <section>
+    <div class="container" style="max-width:440px">
+      <div class="form-card">
+        <h2 style="margin-bottom:8px" data-i18n="reg.title">Create Account</h2>
+        <p style="color:#64748b;margin-bottom:22px;font-size:.92rem" data-i18n="reg.sub">Join SwiftShip to manage your deliveries.</p>
+        <div class="field" style="margin-bottom:12px"><label data-i18n="book.name">Full Name</label><input id="reg-name"></div>
+        <div class="field" style="margin-bottom:12px"><label data-i18n="book.email">Email</label><input id="reg-email" type="email"></div>
+        <div class="field" style="margin-bottom:12px"><label data-i18n="book.phone">Phone</label><input id="reg-phone"></div>
+        <div class="field" style="margin-bottom:12px"><label data-i18n="login.password">Password</label><input id="reg-password" type="password"></div>
+        <div class="field" style="margin-bottom:12px"><label data-i18n="reg.confirm">Confirm Password</label><input id="reg-confirm" type="password"></div>
+        <button class="btn btn-primary" style="width:100%" onclick="doRegister()" data-i18n="reg.btn">Create Account</button>
+        <div style="text-align:center;margin-top:16px;font-size:.9rem">
+          <span data-i18n="reg.have">Already have an account?</span>
+          <a onclick="navigate('login')" style="cursor:pointer;font-weight:600" data-i18n="login.btn">Sign In</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- SUPPORT VIEW -->
+<div class="view" id="view-support">
+  <section>
+    <div class="container">
+      <div class="section-title"><h2 data-i18n="support.title">Support & Contact</h2><p data-i18n="support.subtitle">We're here to help with your deliveries.</p></div>
+      <div class="grid grid-3">
+        <div class="card"><div class="icon">📞</div><h3 data-i18n="support.phone">Phone</h3><p id="support-phone-display">+1 (000) 000-0000</p><p style="font-size:.8rem;margin-top:6px;color:#94a3b8" data-i18n="support.placeholder">Placeholder — replace in config</p></div>
+        <div class="card"><div class="icon">✉️</div><h3 data-i18n="support.email">Email</h3><p id="support-email-display">hello@swiftship.com</p><p style="font-size:.8rem;margin-top:6px;color:#94a3b8" data-i18n="support.placeholder">Placeholder — replace in config</p></div>
+        <div class="card"><div class="icon">💬</div><h3 data-i18n="support.whatsapp">WhatsApp</h3><p data-i18n="support.whatsappDesc">Chat with support</p><button class="btn btn-ghost btn-sm" style="margin-top:10px" onclick="openWhatsApp()" data-i18n="support.chat">Open Chat</button></div>
+      </div>
+      <div class="form-card" style="max-width:640px;margin:40px auto 0">
+        <h3 data-i18n="support.form">Send Us a Message</h3>
+        <div class="form-row"><div class="field"><label data-i18n="book.name">Name</label><input id="sup-name"></div><div class="field"><label data-i18n="book.email">Email</label><input id="sup-email" type="email"></div></div>
+        <div class="form-row one"><div class="field"><label data-i18n="support.subject">Subject</label><input id="sup-subject"></div></div>
+        <div class="form-row one"><div class="field"><label data-i18n="support.message">Message</label><textarea id="sup-message" rows="5" style="padding:11px 13px;border:1.5px solid #e2e8f0;border-radius:9px;font-family:inherit;font-size:.92rem"></textarea></div></div>
+        <button class="btn btn-primary" style="width:100%;margin-top:16px" onclick="submitSupport()" data-i18n="support.send">Send Message</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ABOUT VIEW -->
+<div class="view" id="view-about">
+  <section>
+    <div class="container" style="max-width:780px">
+      <div class="section-title"><h2 data-i18n="about.title">About SwiftShip Delivery</h2></div>
+      <div class="form-card" style="line-height:1.75;color:#334155">
+        <p data-i18n="about.p1">SwiftShip Delivery is a modern delivery platform designed to make sending and receiving packages simple, transparent, and reliable.</p>
+        <p style="margin-top:14px" data-i18n="about.p2">Our goal is to give individuals and businesses a straightforward way to book deliveries, track shipments, and manage their logistics — all in one place.</p>
+        <p style="margin-top:14px" data-i18n="about.p3">This platform is actively being developed. Features are being added progressively, and integrations with maps, payments, and notification services are planned for future releases.</p>
+        <div class="notice" style="margin-top:20px"><strong data-i18n="about.notice">Note:</strong> <span data-i18n="about.noticeText">Contact details shown on this site are placeholders and should be replaced with real information before public use.</span></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- LEGAL VIEWS -->
+<div class="view" id="view-privacy"><section><div class="container" style="max-width:780px"><div class="form-card"><h2 data-i18n="legal.privacy">Privacy Policy</h2><p style="margin-top:14px;line-height:1.75;color:#334155" data-i18n="legal.privacyText">We collect only the information needed to provide our delivery services — such as your name, contact details, and delivery addresses. We do not sell your data to third parties. Full policy available on request.</p></div></div></section></div>
+<div class="view" id="view-terms"><section><div class="container" style="max-width:780px"><div class="form-card"><h2 data-i18n="legal.terms">Terms of Service</h2><p style="margin-top:14px;line-height:1.75;color:#334155" data-i18n="legal.termsText">By using SwiftShip Delivery, you agree to provide accurate delivery information and to follow all applicable laws when sending packages. Service availability and pricing may change.</p></div></div></section></div>
+<div class="view" id="view-refund"><section><div class="container" style="max-width:780px"><div class="form-card"><h2 data-i18n="legal.refund">Refund & Cancellation Policy</h2><p style="margin-top:14px;line-height:1.75;color:#334155" data-i18n="legal.refundText">Deliveries may be cancelled before pickup. Once a package is collected, cancellation and refund rules depend on the delivery status. Contact support for specific requests.</p></div></div></section></div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="logo" style="color:#fff;margin-bottom:12px"><div class="mark">🚚</div><span>SwiftShip Delivery</span></div>
+      <p data-i18n="footer.about" style="font-size:.88rem;color:#94a3b8">Fast, reliable, trackable delivery services nationwide.</p>
+    </div>
+    <div>
+      <h4 data-i18n="footer.company">Company</h4>
+      <span class="f-link" onclick="navigate('about')" data-i18n="nav.about">About</span>
+      <span class="f-link" onclick="navigate('services')" data-i18n="nav.services">Services</span>
+      <span class="f-link" onclick="navigate('business')" data-i18n="nav.business">Business</span>
+    </div>
+    <div>
+      <h4 data-i18n="footer.services">Services</h4>
+      <span class="f-link" onclick="navigate('book')" data-i18n="nav.book">Book Delivery</span>
+      <span class="f-link" onclick="navigate('track')" data-i18n="nav.track">Track Package</span>
+      <span class="f-link" onclick="navigate('pricing')" data-i18n="nav.pricing">Pricing</span>
+    </div>
+    <div>
+      <h4 data-i18n="footer.customers">Customers</h4>
+      <span class="f-link" onclick="navigate('dashboard')" data-i18n="nav.dashboard">Dashboard</span>
+      <span class="f-link" onclick="navigate('login')" data-i18n="nav.login">Login</span>
+      <span class="f-link" onclick="navigate('support')" data-i18n="nav.support">Support</span>
+    </div>
+    <div>
+      <h4 data-i18n="footer.legal">Legal</h4>
+      <span class="f-link" onclick="navigate('privacy')" data-i18n="legal.privacy">Privacy</span>
+      <span class="f-link" onclick="navigate('terms')" data-i18n="legal.terms">Terms</span>
+      <span class="f-link" onclick="navigate('refund')" data-i18n="legal.refund">Refund Policy</span>
+    </div>
+  </div>
+  <div class="footer-bottom" data-i18n="footer.rights">© 2026 SwiftShip Delivery. All rights reserved.</div>
+</footer>
+
+<button class="wa-float" onclick="openWhatsApp()" title="WhatsApp" aria-label="WhatsApp">💬</button>
+<div class="toast-container" id="toasts"></div>
+<div class="modal-backdrop" id="modal"><div class="modal" id="modal-content"></div></div>
+
+<script src="/lang.js"></script>
+<script src="/app.js"></script>
+
+<!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/6aab3359e76e0e343f82206d/1k2mc15es';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+
+</body>
+</html>
