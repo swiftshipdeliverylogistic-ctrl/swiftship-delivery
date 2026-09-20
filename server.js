@@ -122,8 +122,10 @@ app.post('/api/deliveries', auth(false), (req, res) => {
            || db.prepare('SELECT * FROM pricing_rules WHERE active=1 LIMIT 1').get();
     const w = Math.max(0.1, Number(b.package_weight) || 1);
     const zone = estimateZone(b.pickup_address, b.delivery_address);
-    const cost = (r.base_fee + r.per_kg * w + r.per_zone * zone) * r.multiplier;
-    const tracking = nextTrackingNumber();
+    let cost;
+if (b.estimated_cost && Number(b.estimated_cost) > 0) cost = Number(b.estimated_cost);
+else cost = (r.base_fee + r.per_kg * w + r.per_zone * zone) * r.multiplier;
+const tracking = nextTrackingNumber();
     const cid = req.user && req.user.role === 'customer' ? req.user.id : null;
 
     const info = db.prepare(`INSERT INTO deliveries

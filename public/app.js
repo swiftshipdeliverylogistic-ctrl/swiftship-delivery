@@ -363,7 +363,8 @@ function submitBooking() {
       pickup_date: b.pickup_date,
       delivery_date: b.pickup_date,
       special_instructions: b.special_instructions,
-      delivery_type: b.delivery_type
+      delivery_type: b.delivery_type,
+      estimated_cost: calculateDeliveryPrice({ pickup: b.pickup_address, delivery: b.delivery_address, weight: b.package_weight, service: b.delivery_type, quantity: b.package_qty, insurance: b.insurance, fragile: b.fragile, signature: b.signature }).cost
     })
   })
   .then(function(res) {
