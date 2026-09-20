@@ -285,17 +285,16 @@ footer a:hover,footer .f-link:hover{color:#fff}
           <button class="btn btn-outline btn-lg" onclick="navigate('track')" data-i18n="hero.track">🔍 Track Package</button>
         </div>
       </div>
-      <div class="hero-card">
-        <h3 data-i18n="hero.card.title">📦 Service Information</h3>
-        <div class="row"><span data-i18n="hero.sameday">Same-day delivery</span><strong data-i18n="hero.available">Available</strong></div>
-        <div class="row"><span data-i18n="hero.tracking">Real-time tracking</span><strong data-i18n="hero.included">Included</strong></div>
-        <div class="row"><span data-i18n="hero.nationwide">Nationwide coverage</span><strong data-i18n="hero.yes">Yes</strong></div>
-        <div class="row"><span data-i18n="hero.insurance">Insurance option</span><strong data-i18n="hero.optional">Optional</strong></div>
-      </div>
-    </div>
-  </section>
-
-  <div class="quote-widget">
+<div class="hero-card">
+  <h3 style="margin-bottom:12px">📦 Track Your Shipment</h3>
+  <p style="font-size:.88rem;opacity:.9;margin-bottom:14px;line-height:1.4">Enter your tracking number to see real-time status.</p>
+  <input id="hero-track-input" placeholder="e.g. SWIFT-DEMO-001" style="width:100%;padding:12px 14px;border-radius:9px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.12);color:#fff;font-size:.95rem;margin-bottom:10px;font-family:inherit;outline:none">
+  <button class="btn btn-primary" style="width:100%" onclick="heroTrack()">🔍 Track Shipment</button>
+  <div style="font-size:.75rem;opacity:.7;margin-top:12px;text-align:center">Try demo: <strong>SWIFT-DEMO-001</strong></div>
+</div>  
+ </div>
+</section> 
+<div class="quote-widget">
     <div class="quote-card">
       <h3 data-i18n="quote.title">💰 Get an Instant Estimate</h3>
       <p class="sub" data-i18n="quote.sub">Fill in the details below to see an estimated delivery cost.</p>

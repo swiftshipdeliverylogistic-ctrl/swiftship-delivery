@@ -401,6 +401,23 @@ function showBookingSuccess(delivery) {
 // ============================================
 // TRACKING
 // ============================================
+function heroTrack() {
+  var input = document.getElementById("hero-track-input");
+  if (!input) return;
+  var tn = input.value.trim().toUpperCase();
+  if (!tn) {
+    alert("Please enter a tracking number.");
+    return;
+  }
+  if (typeof navigate === "function") navigate("track");
+  setTimeout(function() {
+    var trackInput = document.getElementById("track-input");
+    if (trackInput) {
+      trackInput.value = tn;
+      if (typeof trackPackage === "function") trackPackage();
+    }
+  }, 150);
+}
 function trackPackage() {
   var input = document.getElementById("track-input");
   var box = document.getElementById("track-result");
