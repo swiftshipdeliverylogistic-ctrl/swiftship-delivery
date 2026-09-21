@@ -427,7 +427,128 @@ function printReceipt() {
 }
 // TRACKING
 // ============================================
-function heroTrack() {
+var wizardStep = 1;
+function wizardShow(step) {
+  wizardStep = step;
+  for (var i = 1; i <= 6; i++) {
+    var el = document.getElementById("wiz-step-" + i);
+    if (el) el.style.display = (i === step) ? "block" : "none";
+  }
+  var b = document.getElementById("wiz-back-btn");
+  var n = document.getElementById("wiz-next-btn");
+  if (b) b.style.display = (step > 1) ? "inline-flex" : "none";
+  if (n) n.style.display = (step < 6) ? "inline-flex" : "none";
+  if (step === 6) wizardBuildReview();
+  var sub = document.getElementById("wiz-submit-btn");
+  if (sub) sub.style.display = (step === 6) ? "inline-flex" : "none";
+}
+function wizardNext() {
+  var g = function(id) { var el = document.getElementById(id); return el ? el.value.trim() : ""; };
+  if (wizardStep === 1 && (!g("wiz-name") || !g("wiz-email") || !g("wiz-phone"))) { alert("Please fill in name, email, phone."); return; }
+  if (wizardStep === 2 && (!g("wiz-pickup-addr") || !g("wiz-pickup-city"))) { alert("Please fill in pickup address."); return; }
+  if (wizardStep === 3 && (!g("wiz-deliv-addr") || !g("wiz-deliv-city"))) { alert("Please fill in delivery address."); return; }
+  if (wizardStep < 6) wizardShow(wizardStep + 1);
+}
+function wizardBack() {
+  if (wizardStep > 1) wizardShow(wizardStep - 1);
+}
+function wizardSubmit() {
+  var g = function(id) { var el = document.getElementById(id); return el ? el.value.trim() : ""; };
+  var body = {
+    customer_name: g("wiz-name"),
+    customer_email: g("wiz-email"),
+    customer_phone: g("wiz-phone"),
+    pickup_address: g("wiz-pickup-addr") + ", " + g("wiz-pickup-city"),
+    delivery_address: g("wiz-deliv-addr") + ", " + g("wiz-deliv-city"),
+    package_type: g("wiz-pkg-type"),
+    package_description: g("wiz-desc"),
+    package_weight: g("wiz-weight"),
+    delivery_type: g("wiz-service"),
+    pickup_date: g("wiz-date"),
+    special_instructions: g("wiz-instructions")
+  };
+  var btn = document.getElementById("wiz-submit-btn");
+  if (btn) { btn.disabled = true; btn.textContent = "Submitting..."; }
+  fetch("/api/deliveries", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  })
+  .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
+  .then(function(result) {
+    if (!result.ok) throw new Error(result.data.error || "Booking failed");
+    saveShipmentLocally(result.data.delivery);
+    sendBookingEmail(result.data.delivery);
+    showBookingSuccess(result.data.delivery);
+    wizardShow(1);
+  })
+  .catch(function(e) { alert(e.message || "Could not submit booking."); })
+  .then(function() { if (btn) { btn.disabled = false; btn.textContent = "✓ Submit Booking"; } });
+}
+function wizardBuildReview() {
+  var box = document.getElementById("wiz-review");
+  if (!box) return;
+  var g = function(id) { var el = document.getElementById(id); return el ? el.value : ""; };
+  box.innerHTML =
+    '<strong>Customer:</strong> ' + g("wiz-name") + '<br>' +
+    '<strong>Email:</strong> ' + g("wiz-email") + '<br>' +
+    '<strong>Phone:</strong> ' + g("wiz-phone") + '<br>' +
+    '<strong>Pickup:</strong> ' + g("wiz-pickup-addr") + ', ' + g("wiz-pickup-city") + '<br>' +
+    '<strong>Delivery:</strong> ' + g("wiz-deliv-addr") + ', ' + g("wiz-deliv-city") + '<br>' +
+    '<strong>Package:</strong> ' + g("wiz-pkg-type") + ' • ' + g("wiz-weight") + ' kg<br>' +
+    '<strong>Service:</strong> ' + g("wiz-service") + '<br>' +
+    '<strong>Pickup Date:</strong> ' + (g("wiz-date") || "ASAP");
+}
+
+function wizardSubmit() {
+  var g = function(id) { var el = document.getElementById(id); return el ? el.value.trim() : ""; };
+  var body = {
+    customer_name: g("wiz-name"),
+    customer_email: g("wiz-email"),
+    customer_phone: g("wiz-phone"),
+    pickup_address: g("wiz-pickup-addr") + ", " + g("wiz-pickup-city"),
+    delivery_address: g("wiz-deliv-addr") + ", " + g("wiz-deliv-city"),
+    package_type: g("wiz-pkg-type"),
+    package_description: g("wiz-desc"),
+    package_weight: g("wiz-weight"),
+    delivery_type: g("wiz-service"),
+    pickup_date: g("wiz-date"),
+    special_instructions: g("wiz-instructions")
+  };
+  var btn = document.getElementById("wiz-submit-btn");
+  if (btn) { btn.disabled = true; btn.textContent = "Submitting..."; }
+  fetch("/api/deliveries", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  })
+  .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
+  .then(function(result) {
+    if (!result.ok) throw new Error(result.data.error || "Booking failed");
+    saveShipmentLocally(result.data.delivery);
+    sendBookingEmail(result.data.delivery);
+    showBookingSuccess(result.data.delivery);
+    wizardShow(1);
+  })
+  .catch(function(e) { alert(e.message || "Could not submit booking."); })
+  .then(function() { if (btn) { btn.disabled = false; btn.textContent = "✓ Submit Booking"; } });
+}
+  var quickDiv = document.getElementById("booking-quick");
+  var wizardDiv = document.getElementById("booking-wizard");
+  var quickBtn = document.getElementById("mode-quick-btn");
+function setBookingMode(mode) {
+  var q = document.getElementById("booking-quick");
+  var w = document.getElementById("booking-wizard");
+  var qb = document.getElementById("mode-quick-btn");
+  var wb = document.getElementById("mode-wizard-btn");
+  if (!q || !w) return;
+  var isWiz = (mode === "wizard");
+  q.style.display = isWiz ? "none" : "grid";
+  w.style.display = isWiz ? "block" : "none";
+  if (qb) { qb.className = isWiz ? "btn btn-outline" : "btn btn-primary"; }
+  if (wb) { wb.className = isWiz ? "btn btn-primary" : "btn btn-outline"; }
+}
+  function heroTrack() {
   var input = document.getElementById("hero-track-input");
   if (!input) return;
   var tn = input.value.trim().toUpperCase();

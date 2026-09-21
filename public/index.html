@@ -508,6 +508,75 @@ footer a:hover,footer .f-link:hover{color:#fff}
         <h2 data-i18n="book.title">Book a Delivery</h2>
         <p data-i18n="book.subtitle">Fill in the details below. You'll get a tracking number instantly.</p>
       </div>
+      <div class="booking-mode-tabs" style="display:flex;gap:8px;justify-content:center;margin-bottom:24px;flex-wrap:wrap">
+  <button id="mode-quick-btn" onclick="setBookingMode('quick')" class="btn btn-primary" style="padding:10px 20px">⚡ Quick Form</button>
+  <button id="mode-wizard-btn" onclick="setBookingMode('wizard')" class="btn btn-outline" style="padding:10px 20px">📋 Step-by-Step</button>
+</div>
+<div id="booking-wizard" style="display:none">
+<div style="display:flex;justify-content:space-between;margin-bottom:20px;gap:8px">
+  <div style="flex:1;text-align:center;padding:8px;border-radius:8px;background:#0b5cff;color:#fff;font-weight:700;font-size:.85rem">1</div>
+  <div style="flex:1;text-align:center;padding:8px;border-radius:8px;background:#e2e8f0;color:#64748b;font-weight:700;font-size:.85rem">2</div>
+<div style="flex:1;text-align:center;padding:8px;border-radius:8px;background:#e2e8f0;color:#64748b;font-weight:700;font-size:.85rem">3</div>
+<div style="flex:1;text-align:center;padding:8px;border-radius:8px;background:#e2e8f0;color:#64748b;font-weight:700;font-size:.85rem">4</div>
+<div style="flex:1;text-align:center;padding:8px;border-radius:8px;background:#e2e8f0;color:#64748b;font-weight:700;font-size:.85rem">5</div>
+<div style="flex:1;text-align:center;padding:8px;border-radius:8px;background:#e2e8f0;color:#64748b;font-weight:700;font-size:.85rem">6</div>
+<div id="wiz-step-1">
+  <h3 style="margin-bottom:16px">Step 1: Customer Information</h3>
+  <div style="display:grid;gap:12px">
+    <div class="field"><label>Full Name</label><input id="wiz-name" placeholder="Your name"></div>
+    <div class="field"><label>Email</label><input id="wiz-email" type="email" placeholder="you@example.com"></div>
+    <div class="field"><label>Phone</label><input id="wiz-phone" placeholder="+1 234 567 8900"></div>
+  </div>
+</div>
+<div id="wiz-step-2" style="display:none">
+  <h3 style="margin-bottom:16px">Step 2: Pickup Address</h3>
+  <div style="display:grid;gap:12px">
+    <div class="field"><label>Street Address</label><input id="wiz-pickup-addr" placeholder="123 Main St"></div>
+    <div class="field"><label>City</label><input id="wiz-pickup-city" placeholder="New York"></div>
+  </div>
+</div>
+<div id="wiz-step-3" style="display:none">
+  <h3 style="margin-bottom:16px">Step 3: Delivery Address</h3>
+  <div style="display:grid;gap:12px">
+    <div class="field"><label>Street Address</label><input id="wiz-deliv-addr" placeholder="456 Oak Ave"></div>
+    <div class="field"><label>City</label><input id="wiz-deliv-city" placeholder="London"></div>
+  </div>
+</div>
+<div id="wiz-step-4" style="display:none">
+  <h3 style="margin-bottom:16px">Step 4: Package Details</h3>
+  <div style="display:grid;gap:12px">
+    <div class="field"><label>Package Type</label>
+      <select id="wiz-pkg-type"><option>Parcel</option><option>Document</option><option>Electronics</option><option>Fragile</option><option>Food</option><option>Other</option></select>
+    </div>
+    <div class="field"><label>Weight (kg)</label><input id="wiz-weight" type="number" value="1" min="0.1" step="0.1"></div>
+    <div class="field"><label>Description</label><input id="wiz-desc" placeholder="Brief description"></div>
+  </div>
+</div>
+<div id="wiz-step-5" style="display:none">
+  <h3 style="margin-bottom:16px">Step 5: Delivery Service</h3>
+  <div style="display:grid;gap:12px">
+    <div class="field"><label>Service</label>
+      <select id="wiz-service"><option value="Standard">Standard (2–5 days)</option><option value="Express">Express (next day)</option><option value="Same Day">Same Day</option><option value="International">International</option></select>
+    </div>
+    <div class="field"><label>Preferred Pickup Date</label><input id="wiz-date" type="date"></div>
+    <div class="field"><label>Special Instructions</label><input id="wiz-instructions" placeholder="Optional"></div>
+  </div>
+</div>
+<div id="wiz-step-6" style="display:none">
+  <h3 style="margin-bottom:16px">Step 6: Review &amp; Confirm</h3>
+  <div id="wiz-review" style="background:#f8fafc;border-radius:12px;padding:18px;font-size:.9rem;line-height:1.8">Review will appear here.</div>
+</div>
+<div style="display:flex;justify-content:space-between;margin-top:12px;gap:8px">
+  <button id="wiz-submit-btn" class="btn btn-primary" onclick="wizardSubmit()" style="display:none;width:100%">✓ Submit Booking</button>
+</div>
+<div style="display:flex;justify-content:space-between;margin-top:24px;gap:8px">
+  <button id="wiz-back-btn" class="btn btn-outline" onclick="wizardBack()" style="display:none">← Back</button>
+  <div style="flex:1"></div>
+  <button id="wiz-next-btn" class="btn btn-primary" onclick="wizardNext()">Next →</button>
+</div>
+</div>
+</div>
+<div id="booking-quick" style="display:grid;grid-template-columns:2fr 1fr;gap:24px">
       <div style="display:grid;grid-template-columns:2fr 1fr;gap:24px" id="book-layout">
         <div class="form-card">
           <h3 data-i18n="book.sec.customer">👤 Customer Information</h3>
@@ -582,6 +651,8 @@ footer a:hover,footer .f-link:hover{color:#fff}
           </div>
         </div>
       </div>
+    </div>
+
     </div>
   </section>
 </div>
