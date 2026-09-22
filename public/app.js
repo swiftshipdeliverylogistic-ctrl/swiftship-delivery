@@ -836,22 +836,8 @@ function renderAdminDashboard() {
       }
       table.innerHTML = '<thead><tr><th>Tracking</th><th>Customer</th><th>Destination</th><th>Service</th><th>Status</th><th>Price</th><th>Action</th></tr></thead><tbody>' + rows + '</tbody>';
     });
-}function changeStatus(id, current) {
-  var opts = ["PENDING","CONFIRMED","PICKED UP","IN TRANSIT","OUT FOR DELIVERY","DELIVERED","CANCELLED"];
-  var next = prompt("Current: " + current + "\nNew status:\n" + opts.join(", "));
-  if (!next) return;
-  next = next.toUpperCase().trim();
-  if (opts.indexOf(next) === -1) { alert("Invalid status."); return; }
-  var token = localStorage.getItem("swiftship_token");
-  fetch("/api/deliveries/" + id + "/status", {
-    method: "PUT",
-    headers: { "Content-Type": "application/json", Authorization: "Bearer " + token },
-    body: JSON.stringify({ status: next, note: "Updated by admin" })
-  }).then(function(r) {
-    if (r.ok) { alert("Updated to " + next); renderAdminDashboard(); }
-    else { r.json().then(function(e) { alert("Failed: " + (e.error || "unknown")); }); }
-  }).catch(function() { alert("Network error."); });
 }
+  
 function submitBusiness() {
   var name = document.getElementById("biz-name").value.trim();
   var contact = document.getElementById("biz-contact").value.trim();
@@ -927,3 +913,95 @@ if (document.readyState === "loading") {
 } else {
   initApp();
 }
+function showAddDriverForm() {
+  var c = document.getElementById("driver-form-container");
+  if (c) c.style.display = "block";
+}
+function hideAddDriverForm() {
+  var c = document.getElementById("driver-form-container");
+  if (c) c.style.display = "none";
+  var r = document.getElementById("driver-form-result");
+  if (r) r.innerHTML = "";
+}
+function saveDriver() {
+  var name = (document.getElementById("drv-name") || {}).value || "";
+  var email = (document.getElementById("drv-email") || {}).value || "";
+  var phone = (document.getElementById("drv-phone") || {}).value || "";
+  var vehicle = (document.getElementById("drv-vehicle") || {}).value || "";
+  var reg = (document.getElementById("drv-reg") || {}).value || "";
+  if (!name.trim() || !email.trim()) { alert("Name and email required."); return; }
+  var token = localStorage.getItem("swiftship_token");
+  fetch("/api/drivers", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: "Bearer " + token },
+    body: JSON.stringify({ name: name, email: email, phone: phone, vehicle_type: vehicle, vehicle_reg: reg })
+  }).then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
+    .then(function(result) {
+      if (!result.ok) throw new Error(result.data.error || "Failed");
+      var resultEl = document.getElementById("driver-form-result");
+      if (resultEl) {
+        resultEl.innerHTML = '<div style="background:#dcfce7;border-left:4px solid #16a34a;padding:12px;border-radius:8px;font-size:.9rem"><strong>Driver created!</strong><br>Login email: <strong>' + email + '</strong><br>Temporary password: <strong>' + result.data.temporary_password + '</strong><br><span style="font-size:.8rem;color:#64748b">Save this — share with the driver.</span></div>';
+      }
+      document.getElementById("drv-name").value = "";
+      document.getElementById("drv-email").value = "";
+      document.getElementById("drv-phone").value = "";
+      document.getElementById("drv-vehicle").value = "";
+      document.getElementById("drv-reg").value = "";
+      loadDrivers();
+    })
+    .catch(function(e) { alert(e.message || "Could not save."); });
+}
+function loadDrivers() {
+  var token = localStorage.getItem("swiftship_token");
+  if (!token) return;
+  fetch("/api/drivers", { headers: { Authorization: "Bearer " + token } })
+    .then(function(r) { return r.ok ? r.json() : null; })
+    .catch(function() { return null; })
+    .then(function(data) {
+      var table = document.getElementById("drivers-table");
+      if (!table) return;
+      if (!data || !data.drivers || data.drivers.length === 0) {
+        table.innerHTML = '<tbody><tr><td colspan="6" style="text-align:center;padding:30px;color:#64748b">No drivers yet.</td></tr></tbody>';
+        return;
+      }
+      var rows = "";
+      for (var i = 0; i < data.drivers.length; i++) {
+        var d = data.drivers[i];
+        var badge = d.active ? '<span class="badge delivered">Active</span>' : '<span class="badge cancelled">Inactive</span>';
+        rows += '<tr>' +
+          '<td><strong>' + d.name + '</strong></td>' +
+          '<td>' + (d.email || "") + '</td>' +
+          '<td>' + (d.phone || "") + '</td>' +
+          '<td>' + (d.vehicle_type || "—") + ' ' + (d.vehicle_reg ? '(' + d.vehicle_reg + ')' : '') + '</td>' +
+          '<td>' + badge + '</td>' +
+          '<td><button class="btn btn-ghost btn-sm" onclick="toggleDriver(' + d.id + ', ' + (d.active ? 0 : 1) + ')">' + (d.active ? 'Deactivate' : 'Activate') + '</button></td>' +
+        '</tr>';
+      }
+      table.innerHTML = '<thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Vehicle</th><th>Status</th><th>Action</th></tr></thead><tbody>' + rows + '</tbody>';
+    });
+}
+function toggleDriver(id, activate) {
+  var token = localStorage.getItem("swiftship_token");
+  fetch("/api/drivers/" + id, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json", Authorization: "Bearer " + token },
+    body: JSON.stringify({ active: activate })
+  }).then(function(r) { if (r.ok) loadDrivers(); });
+}
+function changeStatus(id, current) {
+  var opts = ["PENDING","CONFIRMED","PICKED UP","IN TRANSIT","OUT FOR DELIVERY","DELIVERED","CANCELLED"];
+  var next = prompt("Current: " + current + "\nNew status:\n" + opts.join(", "));
+  if (!next) return;
+  next = next.toUpperCase().trim();
+  if (opts.indexOf(next) === -1) { alert("Invalid status."); return; }
+  var token = localStorage.getItem("swiftship_token");
+  fetch("/api/deliveries/" + id + "/status", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json", Authorization: "Bearer " + token },
+    body: JSON.stringify({ status: next, note: "Updated by admin" })
+  }).then(function(r) {
+    if (r.ok) { alert("Updated to " + next); renderAdminDashboard(); }
+    else { r.json().then(function(e) { alert("Failed: " + (e.error || "unknown")); }); }
+  }).catch(function() { alert("Network error."); });
+}
+window.changeStatus = changeStatus;

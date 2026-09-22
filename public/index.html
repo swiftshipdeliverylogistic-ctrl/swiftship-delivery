@@ -771,6 +771,28 @@ footer a:hover,footer .f-link:hover{color:#fff}
       <div class="table-scroll">
         <table class="data-table" id="admin-table"></table>
       </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin:40px 0 14px;flex-wrap:wrap;gap:10px">
+  <h3 style="font-size:1.1rem">Drivers</h3>
+  <button class="btn btn-primary btn-sm" onclick="showAddDriverForm()">+ Add Driver</button>
+</div>
+<div id="driver-form-container" style="display:none;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:20px;margin-bottom:20px">
+  <h3 style="margin-bottom:14px;font-size:1rem">New Driver</h3>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:12px">
+    <div class="field"><label>Full Name *</label><input id="drv-name" placeholder="John Driver"></div>
+    <div class="field"><label>Email *</label><input id="drv-email" type="email" placeholder="driver@example.com"></div>
+    <div class="field"><label>Phone</label><input id="drv-phone" placeholder="+1 234 567 8900"></div>
+    <div class="field"><label>Vehicle Type</label><input id="drv-vehicle" placeholder="Van / Bike / Car"></div>
+    <div class="field"><label>Vehicle Registration</label><input id="drv-reg" placeholder="ABC-1234"></div>
+  </div>
+  <div style="display:flex;gap:8px">
+    <button class="btn btn-primary btn-sm" onclick="saveDriver()">Save Driver</button>
+    <button class="btn btn-outline btn-sm" onclick="hideAddDriverForm()">Cancel</button>
+  </div>
+  <div id="driver-form-result" style="margin-top:12px"></div>
+</div>
+<div class="table-scroll">
+  <table class="data-table" id="drivers-table"></table>
+</div>
     </div>
   </section>
 </div>
