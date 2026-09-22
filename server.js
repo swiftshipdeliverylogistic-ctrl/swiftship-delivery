@@ -212,12 +212,70 @@ app.post('/api/contact', (req, res) => {
 app.get('/api/contact', auth(), role('admin'), (req, res) => {
   res.json({ messages: db.prepare('SELECT * FROM contact_messages ORDER BY created_at DESC').all() });
 });
-// ============================================
+app.get('/api/deliveries', auth(), (req, res) => {
+  try {
+    let rows;
+    if (req.user.role === 'admin') {
+      rows = db.prepare('SELECT d.*, dr.name AS driver_name FROM deliveries d LEFT JOIN drivers dr ON dr.id = d.driver_id ORDER BY d.created_at DESC').all();
+    } else if (req.user.role === 'driver') {
+      const dr = db.prepare('SELECT id FROM drivers WHERE user_id = ?').get(req.user.id);
+      rows = dr ? db.prepare('SELECT * FROM deliveries WHERE driver_id = ? ORDER BY created_at DESC').all(dr.id) : [];
+    } else {
+      rows = db.prepare('SELECT * FROM deliveries WHERE customer_id = ? ORDER BY created_at DESC').all(req.user.id);
+    }
+    res.json({ deliveries: rows });
+  } catch (e) {
+    res.status(500).json({ error: 'Failed to load deliveries' });
+  }
+});// ============================================
 app.get('/api/deliveries/:trackingNumber', (req, res) => {
   const d = db.prepare('SELECT d.*, dr.name AS driver_name, dr.phone AS driver_phone, dr.vehicle_type AS driver_vehicle, dr.vehicle_reg AS driver_vehicle_reg FROM deliveries d LEFT JOIN drivers dr ON dr.id=d.driver_id WHERE d.tracking_number=?').get(req.params.trackingNumber);
   if (!d) return res.status(404).json({ error: 'Tracking number not found' });
   const history = db.prepare('SELECT * FROM status_history WHERE delivery_id=? ORDER BY created_at ASC').all(d.id);
   res.json({ delivery: d, history: history });
+});
+app.put('/api/deliveries/:id', auth(), (req, res) => {
+  const d = db.prepare('SELECT * FROM deliveries WHERE id = ?').get(req.params.id);
+  if (!d) return res.status(404).json({ error: 'Not found' });
+  if (req.user.role === 'customer' && d.customer_id !== req.user.id) return res.status(403).json({ error: 'Not yours' });
+  if (req.user.role === 'driver') return res.status(403).json({ error: 'Drivers cannot edit' });
+  const b = req.body || {};
+  db.prepare(`UPDATE deliveries SET customer_name=COALESCE(?,customer_name), customer_phone=COALESCE(?,customer_phone),
+    customer_email=COALESCE(?,customer_email), pickup_address=COALESCE(?,pickup_address), delivery_address=COALESCE(?,delivery_address),
+    package_description=COALESCE(?,package_description), package_weight=COALESCE(?,package_weight), package_type=COALESCE(?,package_type),
+    pickup_date=COALESCE(?,pickup_date), delivery_date=COALESCE(?,delivery_date), special_instructions=COALESCE(?,special_instructions),
+    updated_at=datetime('now') WHERE id=?`)
+    .run(b.customer_name ?? null, b.customer_phone ?? null, b.customer_email ?? null, b.pickup_address ?? null, b.delivery_address ?? null,
+         b.package_description ?? null, b.package_weight ?? null, b.package_type ?? null, b.pickup_date ?? null, b.delivery_date ?? null,
+         b.special_instructions ?? null, req.params.id);
+  res.json({ delivery: db.prepare('SELECT * FROM deliveries WHERE id = ?').get(req.params.id) });
+});
+
+app.put('/api/deliveries/:id/status', auth(), role('admin','driver'), (req, res) => {
+  const { status, note } = req.body || {};
+  const valid = ['PENDING','CONFIRMED','PICKED UP','IN TRANSIT','OUT FOR DELIVERY','DELIVERED','CANCELLED'];
+  if (!valid.includes(status)) return res.status(400).json({ error: 'Invalid status' });
+  const d = db.prepare('SELECT * FROM deliveries WHERE id = ?').get(req.params.id);
+  if (!d) return res.status(404).json({ error: 'Not found' });
+  if (req.user.role === 'driver') {
+    const dr = db.prepare('SELECT id FROM drivers WHERE user_id = ?').get(req.user.id);
+    if (!dr || d.driver_id !== dr.id) return res.status(403).json({ error: 'Not your delivery' });
+  }
+  db.prepare("UPDATE deliveries SET status = ?, updated_at = datetime('now') WHERE id = ?").run(status, req.params.id);
+  logStatus(d.id, d.status, status, req.user, note || null);
+  res.json({ delivery: db.prepare('SELECT * FROM deliveries WHERE id = ?').get(req.params.id) });
+});
+
+app.put('/api/deliveries/:id/assign', auth(), role('admin'), (req, res) => {
+  const { driver_id } = req.body || {};
+  const d = db.prepare('SELECT id FROM deliveries WHERE id = ?').get(req.params.id);
+  if (!d) return res.status(404).json({ error: 'Not found' });
+  if (driver_id) {
+    const dr = db.prepare('SELECT id FROM drivers WHERE id = ? AND active = 1').get(driver_id);
+    if (!dr) return res.status(400).json({ error: 'Driver not found or inactive' });
+  }
+  db.prepare("UPDATE deliveries SET driver_id = ?, updated_at = datetime('now') WHERE id = ?").run(driver_id || null, req.params.id);
+  res.json({ delivery: db.prepare('SELECT * FROM deliveries WHERE id = ?').get(req.params.id) });
 });
 // EMAIL SENDING (uses EmailJS REST API)
 // ============================================

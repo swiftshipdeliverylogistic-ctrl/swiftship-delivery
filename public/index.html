@@ -756,7 +756,24 @@ footer a:hover,footer .f-link:hover{color:#fff}
     </div>
   </section>
 </div>
-
+<div class="view" id="view-admin">
+  <section>
+    <div class="container">
+      <div class="section-title">
+        <h2>Admin Dashboard</h2>
+        <p>Manage all deliveries, drivers, and customers.</p>
+      </div>
+      <div class="dash-stats" id="admin-stats"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin:24px 0 14px;flex-wrap:wrap;gap:10px">
+        <h3 style="font-size:1.1rem">All Deliveries</h3>
+        <input id="admin-search" placeholder="Search tracking number..." style="padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:.9rem" oninput="filterAdminDeliveries()">
+      </div>
+      <div class="table-scroll">
+        <table class="data-table" id="admin-table"></table>
+      </div>
+    </div>
+  </section>
+</div>
 <!-- LOGIN VIEW -->
 <div class="view" id="view-login">
   <section>

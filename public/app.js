@@ -78,7 +78,7 @@ var FAQS = [
   { q: "faq.q10", a: "faq.a10" }
 ];
 
-var VIEWS = ["home","services","book","track","pricing","business","dashboard","login","register","support","about","privacy","terms","refund"];
+var VIEWS = ["home","services","book","track","pricing","business","dashboard","admin","login","register","support","about","privacy","terms","refund"];
 
 // ============================================
 // NAVIGATION
@@ -101,6 +101,7 @@ function navigate(view) {
   if (mob) mob.classList.remove("open");
 
   if (view === "dashboard") renderDashboard();
+  if (view === "admin") renderAdminDashboard();
   if (view === "book") updateBookingSummary();
 }
 
@@ -790,6 +791,67 @@ function renderDashboard() {
 // ============================================
 // FORMS
 // ============================================
+function renderAdminDashboard() {
+  var token = localStorage.getItem("swiftship_token");
+  if (!token) { alert("Please log in as admin first."); return; }
+  fetch("/api/deliveries", { headers: { Authorization: "Bearer " + token } })
+    .then(function(r) { return r.ok ? r.json() : null; })
+    .catch(function() { return null; })
+    .then(function(data) {
+      if (!data || !data.deliveries) { alert("Could not load. Log in as admin."); return; }
+      var list = data.deliveries;
+      var pending = 0, transit = 0, delivered = 0;
+      for (var i = 0; i < list.length; i++) {
+        if (list[i].status === "PENDING") pending++;
+        if (list[i].status === "IN TRANSIT" || list[i].status === "OUT FOR DELIVERY") transit++;
+        if (list[i].status === "DELIVERED") delivered++;
+      }
+      var statsEl = document.getElementById("admin-stats");
+      if (statsEl) {
+        statsEl.innerHTML =
+          '<div class="stat-card"><div class="label">Total</div><div class="value">' + list.length + '</div></div>' +
+          '<div class="stat-card"><div class="label">Pending</div><div class="value">' + pending + '</div></div>' +
+          '<div class="stat-card"><div class="label">In Transit</div><div class="value">' + transit + '</div></div>' +
+          '<div class="stat-card"><div class="label">Delivered</div><div class="value">' + delivered + '</div></div>';
+      }
+      var table = document.getElementById("admin-table");
+      if (!table) return;
+      if (list.length === 0) {
+        table.innerHTML = '<tbody><tr><td colspan="7" style="text-align:center;padding:40px">No deliveries yet.</td></tr></tbody>';
+        return;
+      }
+      var rows = "";
+      for (var j = 0; j < list.length; j++) {
+        var d = list[j];
+        var badge = d.status === "DELIVERED" ? "delivered" : (d.status === "PENDING" ? "pending" : "transit");
+        rows += '<tr>' +
+          '<td><strong>' + d.tracking_number + '</strong></td>' +
+          '<td>' + (d.customer_name || "") + '</td>' +
+          '<td>' + (d.delivery_address || "") + '</td>' +
+          '<td>' + (d.delivery_type || "Standard") + '</td>' +
+          '<td><span class="badge ' + badge + '">' + d.status + '</span></td>' +
+          '<td>$' + (d.estimated_cost || 0).toFixed(2) + '</td>' +
+          '<td><button class="btn btn-ghost btn-sm" onclick="changeStatus(' + d.id + ', \'' + d.status + '\')">Change</button></td>' +
+        '</tr>';
+      }
+      table.innerHTML = '<thead><tr><th>Tracking</th><th>Customer</th><th>Destination</th><th>Service</th><th>Status</th><th>Price</th><th>Action</th></tr></thead><tbody>' + rows + '</tbody>';
+    });
+}function changeStatus(id, current) {
+  var opts = ["PENDING","CONFIRMED","PICKED UP","IN TRANSIT","OUT FOR DELIVERY","DELIVERED","CANCELLED"];
+  var next = prompt("Current: " + current + "\nNew status:\n" + opts.join(", "));
+  if (!next) return;
+  next = next.toUpperCase().trim();
+  if (opts.indexOf(next) === -1) { alert("Invalid status."); return; }
+  var token = localStorage.getItem("swiftship_token");
+  fetch("/api/deliveries/" + id + "/status", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json", Authorization: "Bearer " + token },
+    body: JSON.stringify({ status: next, note: "Updated by admin" })
+  }).then(function(r) {
+    if (r.ok) { alert("Updated to " + next); renderAdminDashboard(); }
+    else { r.json().then(function(e) { alert("Failed: " + (e.error || "unknown")); }); }
+  }).catch(function() { alert("Network error."); });
+}
 function submitBusiness() {
   var name = document.getElementById("biz-name").value.trim();
   var contact = document.getElementById("biz-contact").value.trim();
