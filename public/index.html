@@ -247,6 +247,8 @@ footer a:hover,footer .f-link:hover{color:#fff}
       <li><a data-nav="pricing" data-i18n="nav.pricing">Pricing</a></li>
       <li><a data-nav="business" data-i18n="nav.business">Business</a></li>
       <li><a data-nav="support" data-i18n="nav.support">Support</a></li>
+      <li id="nav-admin" style="display:none"><a data-nav="admin">👑 Admin</a></li>
+<li id="nav-driver" style="display:none"><a data-nav="driver">🚚 My Deliveries</a></li>
     </ul>
     <div class="nav-right">
       <select class="lang-select" id="lang-switch" onchange="applyLanguage(this.value)" title="Language">
@@ -939,3 +941,11 @@ s0.parentNode.insertBefore(s1,s0);
 
 </body>
 </html>
+function updateNavLinks() {
+  var user = null;
+  try { user = JSON.parse(localStorage.getItem("swiftship_user") || "null"); } catch (e) {}
+  var adminLink = document.getElementById("nav-admin");
+  var driverLink = document.getElementById("nav-driver");
+  if (adminLink) adminLink.style.display = (user && user.role === "admin") ? "" : "none";
+  if (driverLink) driverLink.style.display = (user && user.role === "driver") ? "" : "none";
+}

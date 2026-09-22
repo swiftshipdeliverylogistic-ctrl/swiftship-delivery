@@ -890,6 +890,7 @@ function initApp() {
   renderFAQ();
   updateBookingSummary();
   attachBookingListeners();
+  updateNavLinks();
 
   var links = document.querySelectorAll("[data-nav]");
   for (var i = 0; i < links.length; i++) {
@@ -1005,3 +1006,12 @@ function changeStatus(id, current) {
   }).catch(function() { alert("Network error."); });
 }
 window.changeStatus = changeStatus;
+function updateNavLinks() {
+  var user = null;
+  try { user = JSON.parse(localStorage.getItem("swiftship_user") || "null"); } catch (e) {}
+  var adminLink = document.getElementById("nav-admin");
+  var driverLink = document.getElementById("nav-driver");
+  if (adminLink) adminLink.style.display = (user && user.role === "admin") ? "" : "none";
+  if (driverLink) driverLink.style.display = (user && user.role === "driver") ? "" : "none";
+}
+window.updateNavLinks = updateNavLinks;
