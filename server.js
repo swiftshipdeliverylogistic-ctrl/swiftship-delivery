@@ -226,8 +226,8 @@ app.post('/api/send-booking-email', (req, res) => {
   const payload = {
     service_id: "service_gss5ems",
     template_id: "template_hf0vahb",
-    user_id: "DuzfqlvfakXvrChC0",
-    accessToken: "A3HVohmnLnm3zCE3LhY1G",
+    user_id: "_iIDm3jmzl0vM8AeB",
+    accessToken: "XMY9J-WjBQ5FAomfO2P8x",
     template_params: {
       tracking_number: d.tracking_number || "",
       customer_name: d.customer_name || "",
