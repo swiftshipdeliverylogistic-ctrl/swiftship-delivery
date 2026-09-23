@@ -247,9 +247,7 @@ footer a:hover,footer .f-link:hover{color:#fff}
       <li><a data-nav="pricing" data-i18n="nav.pricing">Pricing</a></li>
       <li><a data-nav="business" data-i18n="nav.business">Business</a></li>
       <li><a data-nav="support" data-i18n="nav.support">Support</a></li>
-      <li id="nav-admin" style="display:none"><a data-nav="admin">👑 Admin</a></li>
-<li id="nav-driver" style="display:none"><a data-nav="driver">🚚 My Deliveries</a></li>
-    </ul>
+<li id="nav-admin" style="display:none"><a onclick="navigate('admin')" style="cursor:pointer">👑 Admin</a></li><li id="nav-driver" style="display:none"><a onclick="navigate('driver')" style="cursor:pointer">🚚 My Deliveries</a></li>    </ul>
     <div class="nav-right">
       <select class="lang-select" id="lang-switch" onchange="applyLanguage(this.value)" title="Language">
         <option value="en">🌍 English</option>
@@ -758,7 +756,21 @@ footer a:hover,footer .f-link:hover{color:#fff}
     </div>
   </section>
 </div>
-<div class="view" id="view-admin">
+<div class="view" id="view-admin">,<div class="view" id="view-driver">
+  <section>
+    <div class="container">
+      <div class="section-title">
+        <h2>My Deliveries</h2>
+        <p id="driver-welcome">Welcome</p>
+      </div>
+      <div class="dash-stats" id="driver-stats"></div>
+      <h3 style="margin:24px 0 14px;font-size:1.1rem">Assigned to You</h3>
+      <div class="table-scroll">
+        <table class="data-table" id="driver-table"></table>
+      </div>
+    </div>
+  </section>
+</div>
   <section>
     <div class="container">
       <div class="section-title">

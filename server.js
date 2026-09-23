@@ -164,7 +164,9 @@ app.post('/api/drivers', auth(), role('admin'), (req, res) => {
     if (ex) userId = ex.id;
     else userId = db.prepare("INSERT INTO users (role,name,email,phone,password_hash) VALUES ('driver',?,?,?,?)")
       .run(name, email.toLowerCase(), phone || null, hash).lastInsertRowid;
-    const info = db.prepare('INSERT INTO drivers (user_id,name,phone,email,vehicle_type,vehicle_reg,active) VALUES (?,?,?,?,?,?,1)')
+    const existingDriver = db.prepare('SELECT id FROM drivers WHERE user_id = ?').get(userId);
+if (existingDriver) return res.status(409).json({ error: 'This email is already registered as a driver.' });
+      const info = db.prepare('INSERT INTO drivers (user_id,name,phone,email,vehicle_type,vehicle_reg,active) VALUES (?,?,?,?,?,?,1)')
       .run(userId, name, phone || null, email.toLowerCase(), vehicle_type || null, vehicle_reg || null);
     res.json({ driver: db.prepare('SELECT * FROM drivers WHERE id=?').get(info.lastInsertRowid), temporary_password: pwd });
   } catch (e) { console.error(e); res.status(500).json({ error: 'Could not create driver' }); }
