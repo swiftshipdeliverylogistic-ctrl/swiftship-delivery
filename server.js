@@ -318,6 +318,9 @@ app.post('/api/send-booking-email', (req, res) => {
     res.status(500).json({ ok: false, error: err.message });
   });
 });
+app.get('/api/admin/backup', auth(), role('admin'), (req, res) => {
+  res.download(require('path').join(__dirname, 'swiftship.db'));
+});
 app.listen(PORT, () => {
   console.log('');
   console.log('========================================');
