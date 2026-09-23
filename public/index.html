@@ -941,11 +941,3 @@ s0.parentNode.insertBefore(s1,s0);
 
 </body>
 </html>
-function updateNavLinks() {
-  var user = null;
-  try { user = JSON.parse(localStorage.getItem("swiftship_user") || "null"); } catch (e) {}
-  var adminLink = document.getElementById("nav-admin");
-  var driverLink = document.getElementById("nav-driver");
-  if (adminLink) adminLink.style.display = (user && user.role === "admin") ? "" : "none";
-  if (driverLink) driverLink.style.display = (user && user.role === "driver") ? "" : "none";
-}

@@ -102,6 +102,7 @@ function navigate(view) {
 
   if (view === "dashboard") renderDashboard();
   if (view === "admin") renderAdminDashboard();
+  if (view === "driver") renderDriverDashboard();
   if (view === "book") updateBookingSummary();
 }
 
@@ -653,8 +654,9 @@ function doLogin() {
     if (!result.ok) throw new Error(result.data.error || "Login failed");
     localStorage.setItem("swiftship_token", result.data.token);
     localStorage.setItem("swiftship_user", JSON.stringify(result.data.user));
-    toast("Welcome back, " + result.data.user.name, "success");
-    navigate("dashboard");
+    toast("Welcome back, " + result.data.user.name, "success");if (result.data.user.role === "admin") navigate("admin");
+else if (result.data.user.role === "driver") navigate("driver");
+else navigate("dashboard");
   })
   .catch(function(err) { toast(err.message || "Login failed.", "error"); });
 }
@@ -1015,3 +1017,68 @@ function updateNavLinks() {
   if (driverLink) driverLink.style.display = (user && user.role === "driver") ? "" : "none";
 }
 window.updateNavLinks = updateNavLinks;
+function renderDriverDashboard() {
+  var user = null;
+  try { user = JSON.parse(localStorage.getItem("swiftship_user") || "null"); } catch (e) {}
+  var welcome = document.getElementById("driver-welcome");
+  if (welcome) welcome.textContent = user ? "Welcome, " + user.name : "Please log in.";
+  var token = localStorage.getItem("swiftship_token");
+  if (!token) { alert("Please log in as a driver."); return; }
+  fetch("/api/driver/me/deliveries", { headers: { Authorization: "Bearer " + token } })
+    .then(function(r) { return r.ok ? r.json() : null; })
+    .catch(function() { return null; })
+    .then(function(data) {
+      var list = (data && data.deliveries) || [];
+      var total = list.length;
+      var pending = 0, transit = 0, delivered = 0;
+      for (var i = 0; i < list.length; i++) {
+        if (list[i].status === "PENDING") pending++;
+        if (list[i].status === "IN TRANSIT" || list[i].status === "OUT FOR DELIVERY") transit++;
+        if (list[i].status === "DELIVERED") delivered++;
+      }
+      var statsEl = document.getElementById("driver-stats");
+      if (statsEl) {
+        statsEl.innerHTML =
+          '<div class="stat-card"><div class="label">Total Assigned</div><div class="value">' + total + '</div></div>' +
+          '<div class="stat-card"><div class="label">Pending</div><div class="value">' + pending + '</div></div>' +
+          '<div class="stat-card"><div class="label">In Transit</div><div class="value">' + transit + '</div></div>' +
+          '<div class="stat-card"><div class="label">Delivered</div><div class="value">' + delivered + '</div></div>';
+      }
+      var table = document.getElementById("driver-table");
+      if (!table) return;
+      if (list.length === 0) {
+        table.innerHTML = '<tbody><tr><td colspan="5" style="text-align:center;padding:30px;color:#64748b">No deliveries assigned yet.</td></tr></tbody>';
+        return;
+      }
+      var rows = "";
+      for (var j = 0; j < list.length; j++) {
+        var d = list[j];
+        var badge = d.status === "DELIVERED" ? "delivered" : (d.status === "PENDING" ? "pending" : "transit");
+        rows += '<tr>' +
+          '<td><strong>' + d.tracking_number + '</strong></td>' +
+          '<td>' + (d.delivery_address || "") + '</td>' +
+          '<td><span class="badge ' + badge + '">' + d.status + '</span></td>' +
+          '<td><button class="btn btn-ghost btn-sm" onclick="driverChangeStatus(' + d.id + ', \'' + d.status + '\')">Update Status</button></td>' +
+        '</tr>';
+      }
+      table.innerHTML = '<thead><tr><th>Tracking</th><th>Destination</th><th>Status</th><th>Action</th></tr></thead><tbody>' + rows + '</tbody>';
+    });
+}
+function driverChangeStatus(id, current) {
+  var opts = ["PICKED UP","IN TRANSIT","OUT FOR DELIVERY","DELIVERED"];
+  var next = prompt("Current: " + current + "\nNew status:\n" + opts.join(", "));
+  if (!next) return;
+  next = next.toUpperCase().trim();
+  if (opts.indexOf(next) === -1) { alert("Pick one of: " + opts.join(", ")); return; }
+  var token = localStorage.getItem("swiftship_token");
+  fetch("/api/deliveries/" + id + "/status", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json", Authorization: "Bearer " + token },
+    body: JSON.stringify({ status: next, note: "Updated by driver" })
+  }).then(function(r) {
+    if (r.ok) { alert("Updated to " + next); renderDriverDashboard(); }
+    else { r.json().then(function(e) { alert("Failed: " + (e.error || "unknown")); }); }
+  }).catch(function() { alert("Network error."); });
+}
+window.renderDriverDashboard = renderDriverDashboard;
+window.driverChangeStatus = driverChangeStatus;
